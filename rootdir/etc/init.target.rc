@@ -42,6 +42,8 @@ on post-fs
 
     export LD_SHIM_LIBS "/system/lib/libcrypto.so|libboringssl-compat.so:/system/lib64/libcrypto.so|libboringssl-compat.so:/system/lib/libmmcamera_interface.so|libcamera_shim.so:/system/vendor/lib/libmmcamera2_sensor_modules.so|libcamera_shim.so:/system/vendor/lib/libmmcamera2_stats_modules.so|libcamera_shim.so"
 
+   setprop ro.hardware.sensors lsm6db0
+
     # We chown/chmod /cust again so because mount is run as root + defaults
     chown system system /cust
     chmod 0771 /cust
@@ -65,7 +67,7 @@ on fs
     mkdir /persist/data 0700 system system
 
     wait /dev/block/bootdevice/by-name/modem
-    mount vfat /dev/block/bootdevice/by-name/modem /firmware ro shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337
+    mount vfat /dev/block/bootdevice/by-name/modem /firmware ro shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337,context=u:object_r:firmware_file:s0
 
     wait /dev/block/bootdevice/by-name/bluetooth
     mount vfat /dev/block/bootdevice/by-name/bluetooth /bt_firmware ro shortname=lower,uid=1002,gid=3002,dmask=227,fmask=337
@@ -108,6 +110,7 @@ service qcamerasvr /system/bin/mm-qcamera-daemon
     class late_start
     user camera
     group camera system inet input graphics
+    writepid /dev/cpuset/system-background/tasks
 
 ## Allow usb charging to be disabled persistently
 #on property:persist.usb.chgdisabled=1
@@ -143,7 +146,7 @@ service qseecomd /system/bin/qseecomd
 #   group system
 #   socket seempdw dgram 0666 system system
 
-service perfd /system/bin/perfd
+service perfd /system/vendor/bin/perfd
    class main
    user root
    writepid /dev/cpuset/system-background/tasks
@@ -175,13 +178,14 @@ on property:sys.shutdown.requested=*
 #   group system
 #   disabled
 #
-service thermal-engine /system/bin/thermal-engine
+service thermal-engine /system/vendor/bin/thermal-engine
    class main
    user root
    socket thermal-send-client stream 0666 system system
    socket thermal-recv-client stream 0660 system system
    socket thermal-recv-passive-client stream 0666 system system
    group root
+   writepid /dev/cpuset/system-background/tasks
 
 service security-check1 /sbin/security_boot_check system
     class core
@@ -264,7 +268,7 @@ service imsdatadaemon /system/bin/imsdatadaemon
     group system wifi radio inet net_raw log qcom_diag net_admin
     disabled
 #
-service select_sns_hal /system/bin/sensor_select.sh
+service select_sns_hal /system/vendor/bin/sensor_select.sh
     class main
     user root
     group root
