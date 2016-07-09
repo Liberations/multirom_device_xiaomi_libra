@@ -1,0 +1,1 @@
+cp ./device/xiaomi/libra/local_manifests/libra.xml $ANDROID_BUILD_TOP/.repo/local_manifests/
