@@ -9,7 +9,10 @@
 
 	<!-- Kernel -->
   	<project path="kernel/xiaomi/libra" name="Mokee/android_kernel_xiaomi_libra" remote="github" revision="mkm" />
-
+        
+        <!-- Vendor -->
+  	<project path="vendor/xiaomi/libra" name="Mokee/android_vendor_xiaomi_libra" remote="github" revision="mkm" />
+  	
        <!-- Stlport cm-13.0 branch -->
    	<project path="external/stlport" name="CyanogenMod/android_external_stlport" remote="github" revision="cm-13.0" />
 
